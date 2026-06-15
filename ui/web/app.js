@@ -18,10 +18,10 @@ let btnPrev, btnNext, pageInfo, docType, pdfCanvas, pdfPlaceholder;
 let btnSaveTxt, btnCopy, btnSaveBundle;
 
 window.addEventListener('pywebviewready', function() {
-    init();
+    void init();
 });
 
-function init() {
+async function init() {
     // Select elements
     btnChoosePdf = document.getElementById('btn-choose-pdf');
     zoomSlider = document.getElementById('zoom-slider');
@@ -68,12 +68,40 @@ function init() {
     
     // Setup Templates
     setupTemplates();
+
+    const savedTheme = localStorage.getItem('theme');
+    toggleTheme.checked = savedTheme !== 'light';
+    applyTheme(toggleTheme.checked);
     
     // Initialize zoom slider background fill
     updateZoomSliderBackground(parseFloat(zoomSlider.value));
+
+    await initializeAppContext();
 }
 
 // === Event Handlers ===
+
+async function initializeAppContext() {
+    try {
+        const appInfo = await window.pywebview.api.get_app_info();
+        if (appInfo) {
+            document.body.classList.add(`platform-${appInfo.platform}`);
+            const versionLabel = document.getElementById('version-label');
+            if (versionLabel) {
+                versionLabel.textContent = `v${appInfo.version}`;
+            }
+        }
+
+        const startupResult = await window.pywebview.api.consume_startup_pdf();
+        if (startupResult && startupResult.ok) {
+            processPdfResult(startupResult);
+        } else if (startupResult && startupResult.error) {
+            alert("Error opening PDF: " + startupResult.error);
+        }
+    } catch (err) {
+        console.error("Failed to initialize app context:", err);
+    }
+}
 
 async function onChoosePdf() {
     try {
@@ -124,6 +152,8 @@ async function onCopyClipboard() {
         setTimeout(() => {
             btnCopy.textContent = oldText;
         }, 1500);
+    } else if (res && res.error) {
+        alert("Copy failed: " + res.error);
     }
 }
 
@@ -154,7 +184,7 @@ async function onCheckUpdate() {
             if (res.has_update) {
                 if (confirm(`New version available: ${res.version}\n\nNotes:\n${res.notes}\n\nWould you like to download and install it now?`)) {
                     btnCheckUpdate.innerHTML = `<span class="spinner"></span>Updating...`;
-                    const installRes = await window.pywebview.api.download_and_install_update(res.download_url, res.version);
+                    const installRes = await window.pywebview.api.download_and_install_update(res.version);
                     if (installRes && !installRes.ok) {
                         alert("Update failed:\n" + installRes.error);
                     }
@@ -194,7 +224,12 @@ function onToggleDebug(e) {
 }
 
 function onToggleTheme(e) {
-    if (e.target.checked) {
+    applyTheme(e.target.checked);
+    localStorage.setItem('theme', e.target.checked ? 'dark' : 'light');
+}
+
+function applyTheme(darkThemeEnabled) {
+    if (darkThemeEnabled) {
         document.body.classList.remove('light-theme');
     } else {
         document.body.classList.add('light-theme');

@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import argparse
 import os
+import platform
 import shutil
 import subprocess
-import sys
 import tempfile
 import time
 import zipfile
@@ -13,9 +13,7 @@ from typing import List
 
 
 def wait_pid_exit(pid: int, timeout_sec: int = 60) -> None:
-    """
-    Wait until process pid is gone. On Windows без psutil: пробуем tasklist.
-    """
+    """Wait until the process exits on Windows or POSIX."""
     deadline = time.time() + timeout_sec
     while time.time() < deadline:
         if not is_pid_running(pid):
@@ -26,7 +24,16 @@ def wait_pid_exit(pid: int, timeout_sec: int = 60) -> None:
 def is_pid_running(pid: int) -> bool:
     if pid <= 0:
         return False
-    # Windows: tasklist /FI "PID eq 1234"
+
+    if os.name != "nt":
+        try:
+            os.kill(pid, 0)
+            return True
+        except ProcessLookupError:
+            return False
+        except PermissionError:
+            return True
+
     try:
         out = subprocess.check_output(
             ["tasklist", "/FI", f"PID eq {pid}"],
@@ -35,6 +42,15 @@ def is_pid_running(pid: int) -> bool:
         return str(pid) in out
     except Exception:
         return False
+
+
+def safe_extract(archive: zipfile.ZipFile, destination: str) -> None:
+    destination_path = os.path.realpath(destination)
+    for member in archive.infolist():
+        member_path = os.path.realpath(os.path.join(destination, member.filename))
+        if os.path.commonpath([destination_path, member_path]) != destination_path:
+            raise ValueError(f"Unsafe ZIP entry: {member.filename}")
+    archive.extractall(destination)
 
 
 def safe_rmtree(path: str) -> None:
@@ -64,7 +80,7 @@ def copy_tree_over(src_dir: str, dst_dir: str, exclude_names: List[str]) -> None
             # replace folder
             if os.path.isdir(d):
                 safe_rmtree(d)
-            shutil.copytree(s, d)
+            shutil.copytree(s, d, symlinks=True)
         else:
             os.makedirs(os.path.dirname(d), exist_ok=True)
             # if file exists and locked, retry
@@ -101,7 +117,7 @@ def main() -> int:
     tmp_root = tempfile.mkdtemp(prefix="mvr_psp_update_")
     try:
         with zipfile.ZipFile(zip_path, "r") as z:
-            z.extractall(tmp_root)
+            safe_extract(z, tmp_root)
 
         # Some zips might contain a single top folder; normalize:
         extracted_root = tmp_root
@@ -118,7 +134,10 @@ def main() -> int:
 
         # Launch updated app
         try:
-            subprocess.Popen([launch_exe], cwd=target_dir)
+            if platform.system() == "Darwin" and launch_exe.endswith(".app"):
+                subprocess.Popen(["/usr/bin/open", launch_exe])
+            else:
+                subprocess.Popen([launch_exe], cwd=target_dir)
         except Exception as e:
             print("Failed to launch:", e)
             return 3

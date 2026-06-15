@@ -69,6 +69,14 @@ html, body {
     user-select: none;
 }
 
+body.platform-macos {
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+body.platform-macos .btn {
+    letter-spacing: -0.01em;
+}
+
 /* ── App Container ── */
 #app {
     display: flex;

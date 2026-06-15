@@ -10,9 +10,9 @@ import difflib
 from typing import Any, Dict, List, Optional, Tuple
 
 from .types import PdfText, ParseResult
+from .version import APP_VERSION
 
 
-APP_VERSION = "beta 1.2"
 DEBUG_SCHEMA_VERSION = 2
 
 

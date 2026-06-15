@@ -1,0 +1,2 @@
+updater/macos_update.sh text eol=lf
+.github/workflows/*.yml text eol=lf

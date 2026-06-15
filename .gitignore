@@ -9,6 +9,7 @@ build/
 dist/
 _internal/
 *.spec
+!MVR_PSP_Check.macOS.spec
 
 # Temporary extraction folder for bug reports
 _bug_extracted/
