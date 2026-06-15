@@ -1,16 +1,20 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import os
+import sys
+from pathlib import Path
+
+project_root = Path.cwd()
+sys.path.insert(0, str(project_root))
 
 from core.version import APP_BUNDLE_ID, APP_BUNDLE_NAME, APP_VERSION
-
 
 target_arch = os.environ.get("PYINSTALLER_TARGET_ARCH") or None
 codesign_identity = os.environ.get("MACOS_CODESIGN_IDENTITY") or None
 
 a = Analysis(
     ["app.py"],
-    pathex=[],
+    pathex=[str(project_root)],
     binaries=[],
     datas=[
         ("ui/web", "ui/web"),
