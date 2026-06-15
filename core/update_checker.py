@@ -16,10 +16,9 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
 
 from core.app_paths import macos_app_bundle, resource_path
-from core.version import APP_BUNDLE_ID, APP_VERSION
+from core.version import APP_BUNDLE_ID, APP_VERSION, GITHUB_REPO
 
 CURRENT_VERSION = APP_VERSION
-GITHUB_REPO = "xuiila337/mvr-vipe"
 GITHUB_RELEASES_API = f"https://api.github.com/repos/{GITHUB_REPO}/releases?per_page=50"
 USER_AGENT = "MVR-PSP-Check-AutoUpdater"
 

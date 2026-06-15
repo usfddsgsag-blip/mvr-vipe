@@ -8,13 +8,14 @@ from core.update_checker import (
     normalized_version,
     select_release_asset,
 )
+from core.version import GITHUB_REPO
 
 
 def asset(name: str) -> dict:
     return {
         "name": name,
         "browser_download_url": (
-            f"https://github.com/xuiila337/mvr-vipe/releases/download/test/{name}"
+            f"https://github.com/{GITHUB_REPO}/releases/download/test/{name}"
         ),
     }
 
