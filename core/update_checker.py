@@ -11,7 +11,7 @@ import urllib.error
 import urllib.request
 from typing import Optional, Dict, Any
 
-CURRENT_VERSION = "1.2.0"
+CURRENT_VERSION = "1.2.2"
 GITHUB_REPO = "xuiila337/mvr-vipe"
 
 
@@ -123,4 +123,4 @@ def launch_updater_and_exit(zip_path: str):
     
     # Start updater in a separate detached process
     subprocess.Popen(args, close_fds=True)
-    sys.exit(0)
+    os._exit(0)

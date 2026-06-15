@@ -654,12 +654,12 @@ def _looks_like_license_table_row(line: str) -> bool:
         return False
 
     dates = [m.group(0) for m in DATE_RE.finditer(line)]
-    if len(dates) < 2:
+    if len(dates) < 1:
         return False
 
     up_line = line.upper()
     status_hit = any(tok in up_line for tok in [
-        "VALID", "IN FORCE", "ACTIVE", "EXPIRED", "SUSPENDED", "CANCELLED", "CANCELED", "REVOKED", "INVALID"
+        "VALID", "IN FORCE", "ACTIVE", "EXPIRED", "SUSPENDED", "CANCELLED", "CANCELED", "REVOKED", "INVALID", "SURRENDERED"
     ])
     if not status_hit:
         return False

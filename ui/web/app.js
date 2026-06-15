@@ -66,6 +66,9 @@ function init() {
     // Setup Drag & Drop
     setupDragAndDrop();
     
+    // Setup Templates
+    setupTemplates();
+    
     // Initialize zoom slider background fill
     updateZoomSliderBackground(parseFloat(zoomSlider.value));
 }
@@ -384,4 +387,61 @@ if (!String.prototype.endsWith) {
     String.prototype.endsWith = function(suffix) {
         return this.indexOf(suffix, this.length - suffix.length) !== -1;
     };
+}
+
+// === Quick Phrases ===
+function setupTemplates() {
+    const btnInsert = document.getElementById('btn-insert-template');
+    const btnMenu = document.getElementById('btn-template-menu');
+    const modal = document.getElementById('template-modal');
+    const btnClose = document.getElementById('btn-close-modal');
+    const btnSave = document.getElementById('btn-save-templates');
+    
+    // Load from local storage
+    for (let i = 0; i < 3; i++) {
+        const stored = localStorage.getItem('quick_phrase_' + i);
+        if (stored !== null) {
+            document.getElementById('template-text-' + i).value = stored;
+        }
+    }
+    const activeIndex = localStorage.getItem('active_phrase_index') || "0";
+    const radioBtn = document.querySelector(`input[name="active-template"][value="${activeIndex}"]`);
+    if (radioBtn) radioBtn.checked = true;
+
+    // Open Menu
+    btnMenu.addEventListener('click', () => {
+        modal.classList.add('active');
+    });
+
+    // Close Menu
+    const closeModal = () => modal.classList.remove('active');
+    btnClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    // Save & Close
+    btnSave.addEventListener('click', () => {
+        for (let i = 0; i < 3; i++) {
+            const val = document.getElementById('template-text-' + i).value;
+            localStorage.setItem('quick_phrase_' + i, val);
+        }
+        const selected = document.querySelector('input[name="active-template"]:checked');
+        if (selected) {
+            localStorage.setItem('active_phrase_index', selected.value);
+        }
+        closeModal();
+    });
+
+    // Insert active phrase
+    btnInsert.addEventListener('click', () => {
+        const selected = document.querySelector('input[name="active-template"]:checked');
+        const idx = selected ? selected.value : "0";
+        const textToInsert = document.getElementById('template-text-' + idx).value.trim();
+        
+        if (textToInsert) {
+            const currentActual = txtActual.value;
+            txtActual.value = textToInsert + "\n\n" + currentActual;
+        }
+    });
 }

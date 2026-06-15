@@ -52,7 +52,7 @@
             <div class="left-panel">
                 <div class="output-section card" style="flex: 1;">
                     <div class="section-title">Actual output</div>
-                    <textarea id="txt-actual" class="text-area" readonly placeholder="Parsed text will appear here..."></textarea>
+                    <textarea id="txt-actual" class="text-area" placeholder="Parsed text will appear here..."></textarea>
                 </div>
                 <div class="output-section card" style="flex: 1;">
                     <div class="section-title">Expected output</div>
@@ -91,9 +91,13 @@
             <div class="bottom-left">
                 <button id="btn-save-txt" class="btn btn-secondary">Save txt.</button>
                 <button id="btn-copy" class="btn btn-secondary">Copy</button>
+                <div class="split-btn-group" style="display: flex; margin-left: 8px;">
+                    <button id="btn-insert-template" class="btn btn-secondary" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Insert Phrase</button>
+                    <button id="btn-template-menu" class="btn btn-secondary" style="border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 0 8px; border-left: 1px solid var(--card-border-muted);">▼</button>
+                </div>
             </div>
             <div class="bottom-right">
-                <span class="version-label">v1.2.0</span>
+                <span class="version-label">v1.2.2</span>
                 <button id="btn-save-bundle" class="btn btn-primary">Save debug bundle</button>
             </div>
         </div>
@@ -102,6 +106,33 @@
     <!-- Drag & Drop Overlay -->
     <div id="drop-overlay">
         <div class="drop-text">Drop PDF here</div>
+    </div>
+
+    <!-- Template Modal -->
+    <div id="template-modal" class="modal-overlay">
+        <div class="modal-content card">
+            <div class="modal-header">
+                <h3>Quick Phrases</h3>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="template-row">
+                    <input type="radio" name="active-template" value="0" checked>
+                    <input type="text" id="template-text-0" class="text-input" placeholder="Phrase 1...">
+                </div>
+                <div class="template-row">
+                    <input type="radio" name="active-template" value="1">
+                    <input type="text" id="template-text-1" class="text-input" placeholder="Phrase 2...">
+                </div>
+                <div class="template-row">
+                    <input type="radio" name="active-template" value="2">
+                    <input type="text" id="template-text-2" class="text-input" placeholder="Phrase 3...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-save-templates" class="btn btn-primary">Save & Close</button>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>

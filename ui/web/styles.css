@@ -542,3 +542,100 @@ input[type="range"].styled-range {
     align-items: center;
     gap: 20px;
 }
+
+/* ── Modal ── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 13, 20, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    width: 400px;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: modalIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    transition: color var(--transition);
+}
+
+.btn-close:hover {
+    color: var(--text);
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.template-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.template-row input[type="radio"] {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.text-input {
+    flex: 1;
+    background: var(--bg-dark);
+    color: var(--text);
+    border: 1px solid var(--card-border-muted);
+    border-radius: var(--radius-input);
+    padding: 8px 12px;
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.text-input:focus {
+    border-color: var(--accent);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
